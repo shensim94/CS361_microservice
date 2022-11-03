@@ -1,3 +1,9 @@
+/**
+ * A more straight forward approach to request data
+ * using a http connection
+ * example request: GET 'http://localhost:3000/search?keyword=cats'
+ */
+
 'use strict';
 
 const PORT = 3000;
@@ -14,7 +20,8 @@ app.use(express.urlencoded({
 
 app.use(express.static('public'));
 
-async function customSearch(keyword){
+//https://github.com/googleapis/google-api-nodejs-client/blob/main/samples/customsearch/customsearch.js
+async function customImageSearch(keyword){
     const res = await customsearch.cse.list({
         q: keyword,
         searchType: "image",
@@ -26,10 +33,11 @@ async function customSearch(keyword){
     res.data['items'].forEach(item => urls.push(item['link']));
     return urls;
 }
+
 app.get("/search", async (req, res) => {
     console.log(req.query);
     if (req.query["keyword"]){
-        let result = await customSearch(req.query["keyword"]);
+        let result = await customImageSearch(req.query["keyword"]);
         //console.log(result)
         res.send(result);
     }
@@ -38,7 +46,7 @@ app.get("/search", async (req, res) => {
     }
 });
 
-// Note: Don't add or change anything below this line.
+// start listening
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
 });
